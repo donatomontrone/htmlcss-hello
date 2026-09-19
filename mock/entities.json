@@ -1,0 +1,52 @@
+{
+  "note": "Demo data only. Replace these example entity IDs with the real Home Assistant entities.",
+  "rooms": {
+    "living": {
+      "lights": [
+        "light.living_ceiling",
+        "light.living_ambient"
+      ],
+      "blinds": [
+        "cover.living"
+      ],
+      "temperature": "sensor.living_temperature",
+      "presence": "binary_sensor.living_presence"
+    },
+    "kitchen": {
+      "lights": [
+        "light.kitchen_spots"
+      ],
+      "blinds": [
+        "cover.kitchen"
+      ],
+      "temperature": "sensor.kitchen_temperature",
+      "presence": "binary_sensor.kitchen_presence"
+    },
+    "bedroom-a": {
+      "lights": [
+        "light.bedroom_1"
+      ],
+      "blinds": [
+        "cover.bedroom_1"
+      ],
+      "temperature": "sensor.bedroom_1_temperature"
+    },
+    "bedroom-b": {
+      "lights": [
+        "light.bedroom_2"
+      ],
+      "blinds": [
+        "cover.bedroom_2"
+      ],
+      "temperature": "sensor.bedroom_2_temperature"
+    },
+    "service": {
+      "lights": [
+        "light.service"
+      ],
+      "blinds": [
+        "cover.service"
+      ]
+    }
+  }
+}
