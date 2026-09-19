@@ -1,12 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>HTML HELLO</title>
-    </head>
-    <body>
-        <h1>Hello World</h1>
-    </body>
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#eef1f5" />
+  <meta name="description" content="Demo di una floorplan dinamica per Home Assistant ricavata dalla planimetria DWG della casa." />
+  <title>Villa Control — Home Assistant Floorplan</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="island-nav" aria-label="Navigazione principale">
+    <a class="brand" href="#" aria-label="Villa Control — Home"><span class="brand-mark" aria-hidden="true">V</span><span class="brand-copy"><strong>Villa Control</strong><span>Home Assistant concept</span></span></a>
+    <nav class="nav-tabs" aria-label="Sezioni"><button class="nav-tab is-active" type="button" data-view="home">Casa</button><button class="nav-tab" type="button" data-view="rooms">Ambienti</button><button class="nav-tab" type="button" data-view="scenes">Scenari</button></nav>
+    <div class="nav-actions"><button class="icon-button" id="themeToggle" type="button" aria-label="Attiva modalità notte"><span class="mode-glyph" aria-hidden="true"></span></button><button class="avatar-button" type="button" aria-label="Profilo">DM</button></div>
+  </header>
+
+  <main class="app-shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow"><span class="status-dot"></span> Casa connessa</p><h1 id="page-title">La casa, <span>in un colpo d’occhio.</span></h1></div>
+      <div class="intro-meta" aria-label="Stato casa"><span><strong id="clock">--:--</strong> Ora locale</span><span><strong id="activeCount">4</strong> dispositivi attivi</span><span><strong>100%</strong> locale</span></div>
+    </section>
+
+    <section class="dashboard-grid" aria-label="Dashboard della casa">
+      <div class="bezel plan-bezel">
+        <article class="panel plan-panel">
+          <header class="panel-header"><div><p class="section-kicker">Planimetria</p><h2>Piano casa</h2></div><div class="segmented" role="group" aria-label="Visualizzazione planimetria"><button class="segment is-active" type="button" data-plan-mode="live">Live</button><button class="segment" type="button" data-plan-mode="clean">Pulita</button></div></header>
+          <div class="floor-stage" id="floorStage">
+            <div class="floor-caption"><span class="live-chip"><span></span> live</span><span>Geometria ricostruita dalla preview incorporata nel DWG</span></div>
+            <svg class="floorplan" id="floorplan" viewBox="0 0 820 980" role="img" aria-labelledby="floorplanTitle floorplanDesc">
+              <title id="floorplanTitle">Planimetria interattiva della casa</title><desc id="floorplanDesc">Seleziona un ambiente per visualizzare e controllare luci, tapparelle e clima.</desc>
+              <defs><filter id="ambientGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="24" /></filter><filter id="markerGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="8" result="b" /><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+              <g class="ambient-layer" aria-hidden="true"><ellipse class="ambient ambient-bedroom-a" cx="290" cy="230" rx="120" ry="100"></ellipse><ellipse class="ambient ambient-bedroom-b" cx="575" cy="225" rx="120" ry="100"></ellipse><ellipse class="ambient ambient-service" cx="275" cy="425" rx="110" ry="70"></ellipse><ellipse class="ambient ambient-kitchen" cx="575" cy="425" rx="110" ry="70"></ellipse><ellipse class="ambient ambient-living" cx="430" cy="685" rx="220" ry="150"></ellipse></g>
+              <g class="rooms"><path class="room is-on" data-room="bedroom-a" tabindex="0" role="button" aria-label="Camera 1" d="M170 105 H390 V338 H335 V358 H170 Z"></path><path class="room" data-room="bedroom-b" tabindex="0" role="button" aria-label="Camera 2" d="M450 105 H690 V350 H630 V330 H450 Z"></path><path class="room" data-room="service" tabindex="0" role="button" aria-label="Servizi" d="M170 380 H335 V485 H170 Z"></path><path class="room is-on" data-room="kitchen" tabindex="0" role="button" aria-label="Cucina" d="M470 380 H690 V485 H470 V452 H445 V414 H470 Z"></path><path class="room is-on" data-room="living" tabindex="0" role="button" aria-label="Living" d="M170 515 H690 V825 H450 V792 H390 V825 H170 Z"></path></g>
+              <g class="walls" aria-hidden="true"><path d="M142 75 H718 V852 H472 V875 H368 V852 H142 Z"></path><path d="M142 350 H327 V366 H405 V350"></path><path d="M435 350 H718"></path><path d="M142 495 H718"></path><path d="M418 75 V350"></path><path d="M405 350 V495"></path><path d="M435 350 V495"></path><path d="M142 208 H103 V300 H142"></path><path d="M103 232 H58 V278 H103"></path><path d="M142 716 H122 V860 H142"></path><path d="M122 828 H72 V905 H205 V875"></path></g>
+              <g class="doors" aria-hidden="true"><path d="M390 338 Q345 338 345 382" class="door-swing"></path><path d="M450 350 Q450 390 490 390" class="door-swing"></path><path d="M335 485 Q335 445 375 445" class="door-swing"></path><path d="M470 485 Q470 445 430 445" class="door-swing"></path><path d="M390 825 Q390 775 440 775" class="door-swing"></path></g>
+              <g class="room-labels" aria-hidden="true"><text x="210" y="155">CAMERA 1</text><text x="490" y="155">CAMERA 2</text><text x="205" y="416">SERVIZI</text><text x="520" y="416">CUCINA</text><text x="220" y="568">LIVING</text></g>
+              <g class="device-markers" aria-hidden="true"><g class="device-marker is-on" data-device-room="bedroom-a" transform="translate(290 240)"><circle r="15"></circle><circle class="device-core" r="4"></circle></g><g class="device-marker" data-device-room="bedroom-b" transform="translate(575 235)"><circle r="15"></circle><circle class="device-core" r="4"></circle></g><g class="device-marker" data-device-room="service" transform="translate(255 435)"><circle r="15"></circle><circle class="device-core" r="4"></circle></g><g class="device-marker is-on" data-device-room="kitchen" transform="translate(575 435)"><circle r="15"></circle><circle class="device-core" r="4"></circle></g><g class="device-marker is-on" data-device-room="living" transform="translate(430 675)"><circle r="15"></circle><circle class="device-core" r="4"></circle></g></g>
+            </svg>
+            <div class="floor-legend" aria-label="Legenda"><span><i class="legend-live"></i>Luce accesa</span><span><i class="legend-presence"></i>Presenza</span><span class="legend-note">Etichette demo</span></div>
+          </div>
+        </article>
+      </div>
+
+      <aside class="side-stack" aria-label="Controlli e stato">
+        <div class="bezel"><section class="panel room-panel" aria-live="polite">
+          <header class="room-panel-head"><div><p class="section-kicker">Ambiente selezionato</p><h2 id="selectedRoomName">Living</h2></div><span class="room-temp" id="selectedRoomTemp">22.4°</span></header>
+          <p class="room-description" id="selectedRoomDescription">Zona giorno · presenza rilevata ora</p>
+          <div class="control-list">
+            <button class="control-row" id="lightControl" type="button"><span class="control-icon lamp-glyph" aria-hidden="true"><i></i></span><span class="control-copy"><strong>Luci</strong><small id="lightState">Accese · 64%</small></span><span class="toggle is-on" id="lightToggle" aria-hidden="true"><i></i></span></button>
+            <button class="control-row" id="blindControl" type="button"><span class="control-icon blind-glyph" aria-hidden="true"><i></i></span><span class="control-copy"><strong>Tapparelle</strong><small id="blindState">Aperte · 72%</small></span><span class="value-pill" id="blindValue">72%</span></button>
+            <button class="control-row" id="climateControl" type="button"><span class="control-icon climate-glyph" aria-hidden="true"><i></i></span><span class="control-copy"><strong>Clima</strong><small id="climateState">Comfort · 22.0°</small></span><span class="value-pill">AUTO</span></button>
+          </div>
+          <button class="detail-button" id="detailButton" type="button"><span>Apri ambiente</span><span class="detail-arrow" aria-hidden="true">↗</span></button>
+        </section></div>
+        <div class="bezel"><section class="panel summary-panel">
+          <div class="summary-title"><div><p class="section-kicker">Casa adesso</p><h2>Stato essenziale</h2></div><span class="all-good"><i></i> Tutto ok</span></div>
+          <div class="metric-grid"><div class="metric"><span>Temperatura</span><strong>22.1°</strong><small>media casa</small></div><div class="metric"><span>Energia</span><strong>1.84</strong><small>kW ora</small></div><div class="metric"><span>Presenza</span><strong>2</strong><small>zone attive</small></div><div class="metric"><span>Aperture</span><strong>1</strong><small>finestra</small></div></div>
+        </section></div>
+      </aside>
+    </section>
+
+    <section class="quick-section" aria-labelledby="quick-title">
+      <header class="section-head"><div><p class="section-kicker">Azioni rapide</p><h2 id="quick-title">Scenari per il momento</h2></div><button class="text-button" id="editScenes" type="button">Modifica</button></header>
+      <div class="scene-grid"><button class="scene-card is-active" type="button" data-scene="home"><span class="scene-index">01</span><span class="scene-copy"><strong>A casa</strong><small>Comfort · luci adattive</small></span><span class="scene-status">Attivo</span></button><button class="scene-card" type="button" data-scene="night"><span class="scene-index">02</span><span class="scene-copy"><strong>Buonanotte</strong><small>Spegni · chiudi · inserisci</small></span><span class="scene-status">Avvia</span></button><button class="scene-card" type="button" data-scene="away"><span class="scene-index">03</span><span class="scene-copy"><strong>Fuori casa</strong><small>Standby · sicurezza</small></span><span class="scene-status">Avvia</span></button></div>
+    </section>
+
+    <section class="devices-section" aria-labelledby="devices-title">
+      <header class="section-head"><div><p class="section-kicker">Preferiti</p><h2 id="devices-title">Controlli che usi davvero</h2></div><button class="text-button" type="button">Tutti i dispositivi</button></header>
+      <div class="device-strip"><button class="favorite-device is-on" type="button" data-favorite-room="living"><span class="favorite-state"></span><span><strong>Living</strong><small>Pianta luce</small></span><b>64%</b></button><button class="favorite-device is-on" type="button" data-favorite-room="kitchen"><span class="favorite-state"></span><span><strong>Cucina</strong><small>Faretti</small></span><b>72%</b></button><button class="favorite-device" type="button" data-favorite-room="bedroom-b"><span class="favorite-state"></span><span><strong>Camera 2</strong><small>Luce</small></span><b>OFF</b></button><button class="favorite-device" type="button" data-favorite-room="service"><span class="favorite-state"></span><span><strong>Servizi</strong><small>Tapparella</small></span><b>88%</b></button></div>
+    </section>
+  </main>
+
+  <dialog class="room-dialog" id="roomDialog" aria-labelledby="dialogTitle"><div class="dialog-grabber" aria-hidden="true"></div><header><div><p class="section-kicker">Controllo ambiente</p><h2 id="dialogTitle">Living</h2></div><button class="dialog-close" id="dialogClose" type="button" aria-label="Chiudi">×</button></header><div class="dialog-hero"><span>Temperatura</span><strong id="dialogTemp">22.4°</strong><small>Set point 22.0° · umidità 46%</small></div><div class="dialog-actions"><button type="button" data-dialog-action="light"><strong>Luce</strong><small>On / Off</small></button><button type="button"><strong>Tapparella</strong><small>72%</small></button><button type="button"><strong>Clima</strong><small>Auto</small></button></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite">Scena attivata</div>
+  <script type="module" src="./app.js"></script>
+</body>
 </html>
